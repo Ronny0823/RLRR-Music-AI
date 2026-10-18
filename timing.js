@@ -27,7 +27,7 @@
     if(!hasLyrics)beats=64; // Neutral 16-bar sketch when there is no lyric yet.
     else beats+=(explicitIntro?0:16)+(explicitOutro?0:16)+Math.max(0,sections.filter(s=>s.lines.length).length-1)*4;
     const bars=Math.ceil(beats/4),duration=Math.ceil(bars*4*60/bpm);
-    return {duration,bars,lines:lineCount,hasLyrics,tooLong:duration>600};
+    return {duration,bars,lines:lineCount,hasLyrics,tooLong:duration>600,sections};
   }
   function format(seconds){return `${Math.floor(seconds/60)}:${String(Math.floor(seconds%60)).padStart(2,'0')}`;}
   globalThis.RLRRTiming={estimate,format};

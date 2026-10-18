@@ -1,0 +1,65 @@
+/* ACE-Step's public Gradio demo. No API keys, proxy or database. */
+(() => {
+  'use strict';
+  const base='https://ace-step-ace-step.hf.space';
+  const endpoint=`${base}/gradio_api/call/__call__`;
+  const genrePrompts={
+    bachata:'Dominican bachata, expressive requinto lead guitar, rhythm guitar, bongo, guira, warm bass, emotional male lead singer, heartfelt Spanish singing',
+    merengue:'Dominican merengue, tambora, guira, energetic brass, rhythmic bass, lively male lead singer and backing vocals, Spanish singing',
+    balada:'Romantic Latin ballad, warm piano, acoustic guitar, gentle drums, expressive emotional male lead singer, Spanish singing',
+    cumbia:'Traditional Caribbean cumbia, gaita flutes, tambora, alegre, llamador, maracas, warm bass, male lead singer and community backing vocals, Spanish singing'
+  };
+  function tag(label){
+    if(/pre[- ]?coro/.test(label))return 'pre-chorus';
+    if(/coro|chorus|estribillo/.test(label))return 'chorus';
+    if(/verso|estrofa|verse/.test(label))return 'verse';
+    if(/puente|bridge/.test(label))return 'bridge';
+    if(/outro|final instrumental/.test(label))return 'outro';
+    if(/intro/.test(label))return 'intro';
+    if(/solo|instrumental|interludio|mambo/.test(label))return 'instrumental';
+    return label.replace(/[\[\]]/g,'')||'verse';
+  }
+  function prepareLyrics(project){
+    const sections=RLRRTiming.estimate(project).sections;let previousChorus=[];const blocks=[];
+    for(const section of sections){const name=tag(section.label);let lines=section.lines.filter(line=>line.trim());if(name==='chorus'){if(lines.length)previousChorus=lines;else lines=previousChorus;}if(!lines.length&&!['intro','outro','instrumental'].includes(name))continue;for(let n=0;n<section.repeat;n++)blocks.push(`[${name}]\n${lines.join('\n')}`);}
+    return blocks.join('\n\n');
+  }
+  function readableError(value){
+    const raw=typeof value==='string'?value:JSON.stringify(value||'');
+    if(/quota|exceeded|zerogpu|gpu.*limit|rate.?limit|too many/i.test(raw))return 'La demo alcanzó su cuota o límite de uso. Espera y vuelve a probar; también puedes abrir la demo de ACE-Step. No se ha cobrado nada.';
+    if(/sign.?in|log.?in|unauthorized|authentication|401|403/i.test(raw))return 'La demo requiere acceso o no acepta esta solicitud. Puedes abrir ACE-Step para revisar el acceso. No se ha cobrado nada.';
+    return 'El motor no pudo terminar la canción. Conserva tu proyecto y vuelve a intentarlo más tarde.';
+  }
+  async function generate(project,{signal,onStatus=()=>{}}={}){
+    if(!genrePrompts[project.genre]||!project.lyrics.trim())throw Error('Escribe una letra para crear la canción cantada.');
+    if(!Number.isFinite(project.duration)||project.duration<12||project.duration>240)throw Error('La demo admite hasta 4 minutos por canción. Tu letra necesita más tiempo: acórtala o divídela en proyectos, sin recortarla automáticamente.');
+    const lyrics=prepareLyrics(project);
+    const prompt=`${genrePrompts[project.genre]}, ${project.bpm} BPM. ${project.style}`;
+    // Ordered signature verified against this demo's /gradio_api/info endpoint.
+    const data=[project.duration,prompt,lyrics,60,15,'euler','apg',10,'',.5,0,3,true,false,true,'',0,0,false,.5,null,'none'];
+    const controller=new AbortController();
+    const abort=()=>controller.abort(signal?.reason);signal?.addEventListener('abort',abort,{once:true});
+    if(signal?.aborted)abort();
+    const timer=setTimeout(()=>controller.abort(new Error('La demo tardó más de 10 minutos. Vuelve a intentarlo más tarde.')),600000);
+    let events;
+    try{
+      onStatus('Enviando letra y estilo a ACE-Step…');
+      const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data}),credentials:'omit',signal:controller.signal});
+      if(!response.ok)throw Error(readableError(`${response.status} ${await response.text()}`));
+      const job=await response.json();if(!/^[a-f0-9]{32}$/i.test(job.event_id||''))throw Error('El motor no devolvió una solicitud válida.');
+      onStatus('En cola o creando voz, ritmo e instrumentos. Puede tardar varios minutos…');
+      const file=await new Promise((resolve,reject)=>{
+        events=new EventSource(`${endpoint}/${job.event_id}`);
+        events.addEventListener('complete',event=>{try{const result=JSON.parse(event.data);if(!result?.[0]?.url)throw Error('El motor no devolvió audio.');const url=new URL(result[0].url);if(url.origin!==base||!url.pathname.startsWith('/gradio_api/file='))throw Error('El motor devolvió una dirección inesperada.');resolve({url:url.href,name:result[0].orig_name});}catch(error){reject(error);}});
+        events.addEventListener('error',event=>{events.close();reject(new Error(event.data?readableError(event.data):'La conexión con ACE-Step se interrumpió. Guarda tu proyecto y vuelve a probar.'));});
+        controller.signal.addEventListener('abort',()=>{events.close();reject(controller.signal.reason||new DOMException('Cancelado','AbortError'));},{once:true});
+        if(controller.signal.aborted){events.close();reject(controller.signal.reason||new DOMException('Cancelado','AbortError'));}
+      });
+      events?.close();onStatus('Descargando la canción terminada…');
+      const audio=await fetch(file.url,{credentials:'omit',signal:controller.signal});if(!audio.ok)throw Error('La canción se creó, pero no pudo descargarse. Vuelve a intentarlo más tarde.');
+      const blob=await audio.blob();if(blob.size<1000)throw Error('El motor devolvió un archivo de audio vacío.');
+      return {blob,url:file.url,extension:(file.name||'').toLowerCase().endsWith('.wav')?'wav':'mp3'};
+    }finally{clearTimeout(timer);events?.close();signal?.removeEventListener('abort',abort);}
+  }
+  globalThis.RLRRAI={generate,prepareLyrics,readableError,base,maxDuration:240};
+})();

@@ -7,10 +7,11 @@
   <meta name="description" content="RLRR Music Studio: prepara tus letras, explora bocetos instrumentales y escucha tu música en un estudio independiente.">
   <title>RLRR · Music Studio</title>
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./style.css?v=auto-duration-1">
-  <script src="./timing.js?v=auto-duration-1" defer></script>
-  <script src="./engine.js?v=auto-duration-1" defer></script>
-  <script src="./app.js?v=auto-duration-1" defer></script>
+  <link rel="stylesheet" href="./style.css?v=vocals-1">
+  <script src="./timing.js?v=vocals-1" defer></script>
+  <script src="./engine.js?v=vocals-1" defer></script>
+  <script src="./ai.js?v=vocals-1" defer></script>
+  <script src="./app.js?v=vocals-1" defer></script>
 </head>
 <body>
   <aside class="sidebar">
@@ -25,18 +26,20 @@
       <div class="heading"><div><p class="eyebrow">HECHO PARA TUS IDEAS</p><h1>Que tu próxima canción<br><span>empiece aquí.</span></h1><p class="intro">Dale forma a esa historia que merece ser escuchada.</p></div><div class="sound-art" aria-hidden="true"><div class="vinyl"><div>RLRR<small>ORIGINALS</small></div></div><span class="art-note">DE LA IDEA AL SONIDO</span></div></div>
       <div class="studio-grid">
         <form id="studio" class="panel editor">
-          <div class="panel-top"><h2>Tu nueva creación</h2><span class="tag">ESTUDIO LOCAL</span></div>
+          <div class="panel-top"><h2>Tu nueva creación</h2><span class="tag">ESTUDIO IA</span></div>
           <label for="title">Título de la canción</label><input id="title" maxlength="120" placeholder="Ponle nombre a tu historia…" autocomplete="off">
           <label id="genre-label">Elige tu sonido</label><div class="genres" role="group" aria-labelledby="genre-label"><button type="button" class="genre selected" data-genre="bachata" aria-pressed="true">♬ Bachata</button><button type="button" class="genre" data-genre="merengue" aria-pressed="false">✺ Merengue</button><button type="button" class="genre" data-genre="balada" aria-pressed="false">♡ Balada</button><button type="button" class="genre" data-genre="cumbia" aria-pressed="false">☀ Cumbia</button></div>
           <div class="label-line"><label for="style">Estilo musical</label><span id="style-count">0 / 1000</span></div><textarea id="style" rows="3" maxlength="1000" placeholder="Instrumentos, ambiente e interpretación…"></textarea><button class="text-button" type="button" id="style-reset">↻ Usar estilo sugerido del género</button>
           <div class="label-line"><label for="lyrics">Tu letra</label><button type="button" id="structure" class="text-button">+ Añadir estructura</button></div><textarea id="lyrics" rows="8" maxlength="20000" placeholder="[Verso 1]&#10;Escribe aquí lo que llevas dentro…&#10;&#10;[Coro]&#10;La parte que nadie dejará de cantar."></textarea>
           <div class="settings"><div><label for="bpm">Ritmo <span id="bpm-value">128 BPM</span></label><input id="bpm" type="range" min="60" max="180" value="128"></div><div><label for="duration">Duración automática</label><output id="duration" aria-live="polite" aria-describedby="duration-help"></output><p id="duration-help" class="duration-help">Se calcula según tu letra y el ritmo.</p></div></div>
-          <div class="generation-note"><span>ⓘ</span><p><strong>Boceto instrumental, sin voz.</strong> Crea una base sintetizada en tu dispositivo. La duración se estima a partir de tu letra. El boceto sigue siendo instrumental: no canta la letra ni interpreta las instrucciones del estilo.</p></div>
-          <button class="primary" id="generate" type="submit">✦ Crear boceto instrumental <span>→</span></button>
+          <div class="generation-note"><span>✦</span><p><strong>Tu letra, cantada con música.</strong> Al crear, se envían tu letra, estilo y ajustes a la demo pública de ACE-Step en Hugging Face para generar voz y acompañamiento. Hasta 4 minutos; sujeto a colas y cuotas gratuitas. El resultado puede variar en pronunciación y estilo.</p></div>
+          <button class="primary" id="generate" type="submit">✦ Crear canción con voz <span>→</span></button>
+          <p id="generation-status" role="status" aria-live="polite" class="generation-status" hidden></p><button type="button" id="cancel-generation" class="text-button" hidden>Detener espera</button>
+          <button class="secondary local-sketch" id="local-generate" type="button">♫ Probar solo un boceto instrumental local</button>
           <div class="form-footer"><button type="button" id="save" class="secondary">Guardar proyecto</button><button type="button" id="export" class="secondary">Exportar letra y estilo</button></div>
         </form>
-        <div class="right-column"><section class="panel listening"><div class="panel-top"><h2>Escucha tu idea</h2><span class="live-dot"></span></div><div class="cover"><div class="cover-lines" aria-hidden="true"></div><span class="cover-badge">RLRR ORIGINALS</span><div class="cover-title">Historias que<br>se vuelven <i>música.</i></div><span class="cover-bottom">TU PRÓXIMA CREACIÓN</span></div><div id="player-empty"><h3>Todo empieza con una idea</h3><p>Crea un boceto o abre un audio de tu dispositivo para escucharlo aquí.</p></div><div id="player-ready" hidden><h3 id="track-title"></h3><p id="track-info"></p><audio id="audio" controls preload="metadata"></audio><a id="download" class="secondary download" download>↓ Descargar audio</a></div><label class="upload" for="audio-file">↑ Abrir mi audio<input id="audio-file" type="file" accept="audio/*,.mp3,.wav,.m4a,.ogg,.flac"></label><p class="small-muted">El audio que abras permanece en tu dispositivo.</p></section>
-        <section class="panel ai-state"><div class="ai-symbol">✦</div><div><h3>Canciones cantadas con IA</h3><span class="pending">MOTOR PENDIENTE</span><p>Esta versión todavía no genera voz ni canciones completas como Suno. GitHub aloja la web; la generación cantada necesita un motor musical adicional.</p></div></section>
+        <div class="right-column"><section class="panel listening"><div class="panel-top"><h2>Escucha tu idea</h2><span class="live-dot"></span></div><div class="cover"><div class="cover-lines" aria-hidden="true"></div><span class="cover-badge">RLRR ORIGINALS</span><div class="cover-title">Historias que<br>se vuelven <i>música.</i></div><span class="cover-bottom">TU PRÓXIMA CREACIÓN</span></div><div id="player-empty"><h3>Todo empieza con una idea</h3><p>Pega tu letra y crea una canción con voz, o abre un audio de tu dispositivo.</p></div><div id="player-ready" hidden><h3 id="track-title"></h3><p id="track-info"></p><audio id="audio" controls preload="metadata"></audio><a id="download" class="secondary download" download>↓ Descargar audio</a></div><label class="upload" for="audio-file">↑ Abrir mi audio<input id="audio-file" type="file" accept="audio/*,.mp3,.wav,.m4a,.ogg,.flac"></label><p class="small-muted">El audio que abras permanece en tu dispositivo.</p></section>
+        <section class="panel ai-state"><div class="ai-symbol">✦</div><div><h3>Voz y música con ACE-Step</h3><span class="pending">DEMO PÚBLICA · EXPERIMENTAL</span><p>Generación externa desde tu letra y estilo. Sin contratar servicios ni introducir claves. Su disponibilidad y cuotas dependen de Hugging Face; no tiene calidad garantizada de Suno. <a href="https://huggingface.co/spaces/ACE-Step/ACE-Step" target="_blank" rel="noopener">Abrir demo ↗</a></p></div></section>
         <div class="creative-note"><span>“</span>Una guitarra puede decir<br>lo que la voz no se atreve.</div></div>
       </div>
     </section>

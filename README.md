@@ -1,6 +1,6 @@
 # RLRR Music Studio
 
-Estudio web estático independiente para RLRR. HTML, CSS y JavaScript sin dependencias, cuentas, claves, bases de datos ni conexiones a proyectos anteriores. Listo para GitHub Pages.
+Estudio web estático independiente para RLRR. HTML, CSS y JavaScript sin paquetes externos, claves, bases de datos ni conexiones a proyectos anteriores. Listo para GitHub Pages.
 
 ## Qué funciona
 
@@ -10,9 +10,18 @@ Estudio web estático independiente para RLRR. HTML, CSS y JavaScript sin depend
 - Abrir y reproducir audio del dispositivo, sin subirlo a ningún servicio.
 - Guardar y abrir proyectos en localStorage del navegador, con exportación/importación JSON y exportación TXT de letra y estilo.
 
-## Pendiente: generación de canciones cantadas
+## Generación de canciones cantadas con ACE-Step
 
-**Esta versión no contiene un modelo de IA, no genera voces y no produce canciones terminadas como Suno.** El estado pendiente está visible en la página. GitHub Pages solo sirve los archivos de la web; hace falta elegir y conectar un motor de generación musical para esa función. No hay un botón que simule generar una canción ni se guardan claves privadas en la web. No se ha contratado ningún servicio.
+El botón **Crear canción con voz** envía la letra, el estilo, el género, el BPM y la duración estimada a la demo pública oficial de [ACE-Step](https://huggingface.co/spaces/ACE-Step/ACE-Step), alojada en Hugging Face. No requiere claves en esta integración. No se contrata ningún servicio, no se instala un modelo en GitHub ni se usa la cuenta de Suno del usuario.
+
+La API de esta demo es ACE-Step v1, no ACE-Step 1.5. Se comprobó su firma pública `/gradio_api/info`, una generación real y la autorización CORS desde el origen de GitHub Pages. Se usa POST más eventos SSE de Gradio, y se descarga el resultado al navegador. La disponibilidad, cuota gratuita y cola dependen del proveedor; puede denegar peticiones o cambiar su API. No hay garantía de reproducir exactamente la letra, duración, género o pronunciación, ni de igualar la calidad de Suno.
+
+- Máximo de esta demo: 240 segundos. Si la estimación supera ese tiempo, la interfaz pide acortar o dividir la letra, sin recortarla automáticamente.
+- Versos, coros y otras secciones se traducen a etiquetas del modelo; las repeticiones explícitas se expanden antes de enviarlas.
+- Los mensajes de progreso y error son visibles y no se sustituyen por un boceto falso si el servidor falla.
+- **Detener espera** cierra la conexión en esta página; la demo puede continuar el trabajo remoto. La espera máxima es de 10 minutos.
+- El archivo de audio se descarga por separado: los respaldos JSON conservan letras y ajustes, no los audios. El archivo alojado por la demo es temporal.
+- Sigue disponible un botón separado de bocetos instrumentales sintetizados localmente, sin IA ni voz.
 
 ## Publicar en GitHub Pages
 
@@ -27,6 +36,6 @@ No hacen falta Actions ni instalar paquetes. `.nojekyll` permite servir directam
 
 Abrir `index.html` en un navegador moderno. También se puede servir la carpeta con `python3 -m http.server 8080`.
 
-Los proyectos se guardan solo al pulsar **Guardar proyecto**. Exportar periódicamente una copia: borrar datos del navegador o cambiar de dispositivo no conserva localStorage. Los audios se descargan por separado y no forman parte del respaldo JSON. No hay sincronización entre dispositivos. Todo el procesamiento sucede localmente y la aplicación no realiza peticiones externas. GitHub sirve los archivos y recibe las visitas normales de la página.
+Los proyectos se guardan solo al pulsar **Guardar proyecto**. Exportar periódicamente una copia: borrar datos del navegador o cambiar de dispositivo no conserva localStorage. Los audios se descargan por separado y no forman parte del respaldo JSON. No hay sincronización entre dispositivos. La edición, los proyectos y los bocetos instrumentales locales funcionan en el dispositivo. Solo al crear la canción con voz se envían la letra y los ajustes a la demo externa y se descarga su resultado. GitHub sirve los archivos y recibe las visitas normales de la página.
 
 La duración se recalcula al cambiar la letra, el género o el ritmo, y al abrir proyectos antiguos. Las copias anteriores siguen siendo compatibles; sus duraciones manuales se sustituyen por el cálculo automático. El audio se sintetiza en un Web Worker para mantener disponible la interfaz durante bocetos largos.
