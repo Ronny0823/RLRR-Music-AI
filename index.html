@@ -7,13 +7,14 @@
   <meta name="description" content="RLRR Music Studio: prepara tus letras, explora bocetos instrumentales y escucha tu música en un estudio independiente.">
   <title>RLRR · Music Studio</title>
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./style.css?v=ace15-xl-1">
-  <script src="./sound.js?v=ace15-xl-1" defer></script>
-  <script src="./timing.js?v=ace15-xl-1" defer></script>
-  <script src="./engine.js?v=ace15-xl-1" defer></script>
-  <script src="./ai.js?v=ace15-xl-1" defer></script>
-  <script src="./quality.js?v=ace15-xl-1" defer></script>
-  <script src="./app.js?v=ace15-xl-1" defer></script>
+  <link rel="stylesheet" href="./style.css?v=lyrics-auto-1">
+  <script src="./sound.js?v=lyrics-auto-1" defer></script>
+  <script src="./lyrics.js?v=lyrics-auto-1" defer></script>
+  <script src="./timing.js?v=lyrics-auto-1" defer></script>
+  <script src="./engine.js?v=lyrics-auto-1" defer></script>
+  <script src="./ai.js?v=lyrics-auto-1" defer></script>
+  <script src="./quality.js?v=lyrics-auto-1" defer></script>
+  <script src="./app.js?v=lyrics-auto-1" defer></script>
 </head>
 <body>
   <aside class="sidebar">
@@ -33,6 +34,7 @@
           <label id="genre-label">Sonido detectado automáticamente</label><div class="genres" aria-labelledby="genre-label"><span class="genre selected" data-genre="bachata">♬ Bachata</span><span class="genre" data-genre="merengue">✺ Merengue</span><span class="genre" data-genre="balada">♡ Balada</span><span class="genre" data-genre="cumbia">☀ Cumbia</span><span class="genre" data-genre="libre">♫ Otro estilo</span></div><p id="sound-detected" class="style-help" role="status" aria-live="polite"></p>
           <div class="label-line"><label for="style">Estilo musical</label><span id="style-count">0 / 1000</span></div><textarea id="style" rows="3" maxlength="1000" placeholder="Ejemplo: cumbia colombiana, voz femenina, gaitas y tambora, 94 BPM…"></textarea><p class="style-help">Escribe o pega el estilo. El género, la voz solicitada y el ritmo se interpretan automáticamente; tu texto se conserva completo.</p>
           <div class="label-line"><label for="lyrics">Tu letra</label><button type="button" id="structure" class="text-button">+ Añadir estructura</button></div><textarea id="lyrics" rows="8" maxlength="20000" placeholder="[Verso 1]&#10;Escribe aquí lo que llevas dentro…&#10;&#10;[Coro]&#10;La parte que nadie dejará de cantar."></textarea>
+          <p class="style-help">Puedes pegar el texto completo: se separan los encabezados de título, estilo, descripción y etiquetas. Revisa la letra detectada antes de crear.</p><p id="lyrics-detection" class="style-help" role="status" hidden></p><details id="lyrics-source" hidden><summary>Ver texto original pegado</summary><textarea id="lyrics-original" rows="6" readonly aria-label="Texto original pegado"></textarea><button type="button" id="restore-lyrics" class="text-button">Restaurar texto original</button></details>
           <div class="settings"><div><label for="bpm">Ritmo automático <span id="bpm-value">128 BPM</span></label><input id="bpm" type="range" disabled aria-label="Ritmo calculado desde el estilo" min="60" max="180" value="128"></div><div><label for="duration">Duración automática</label><output id="duration" aria-live="polite" aria-describedby="duration-help"></output><p id="duration-help" class="duration-help">Se calcula según tu letra y el ritmo.</p></div></div>
           <div class="generation-note"><span>✦</span><p><strong>Tu letra, cantada con música.</strong> ACE-Step 1.5 XL genera voz, ritmo e instrumentos en una sola canción de hasta 10 minutos, con duración estimada según tu letra. Se solicita audio FLAC sin pérdida. Al crear, se envían tu letra y ajustes a Hugging Face. La calidad puede variar; sujeto a colas y cuotas gratuitas.</p></div>
           <button class="primary" id="generate" type="submit">✦ Crear canción con voz <span>→</span></button>

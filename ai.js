@@ -20,7 +20,7 @@
     return label.replace(/[\[\]]/g,'')||'verse';
   }
   function prepareLyrics(project){
-    const sections=RLRRTiming.estimate(project).sections;let previousChorus=[];const blocks=[];
+    const sections=RLRRTiming.estimate({...project,lyrics:RLRRLyrics.extract(project.lyrics).lyrics}).sections;let previousChorus=[];const blocks=[];
     for(const section of sections){const name=tag(section.label);let lines=section.lines.filter(line=>line.trim());if(name==='chorus'){if(lines.length)previousChorus=lines;else lines=previousChorus;}if(!lines.length&&!['intro','outro','instrumental'].includes(name))continue;for(let n=0;n<section.repeat;n++)blocks.push(`[${name}]\n${lines.join('\n')}`);}
     return blocks.join('\n\n');
   }

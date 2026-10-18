@@ -23,3 +23,7 @@ El resultado se prepara como WAV estéreo a 48 kHz con corrección de componente
 Detener espera cierra la conexión local; el proveedor puede continuar procesando. Tiempo máximo de espera: 10 minutos. Los audios deben descargarse por separado. Los proyectos se guardan al pulsar Guardar proyecto en localStorage; los respaldos JSON contienen letras y ajustes, no audio. Borrar datos del navegador o cambiar de dispositivo no conserva los proyectos locales.
 
 GitHub Pages sirve los archivos estáticos. Solo la generación con voz envía letras y ajustes a la demo externa. El boceto instrumental local sigue disponible como función separada.
+
+## Detección de letra pegada
+
+`lyrics.js` separa encabezados explícitos de letra, título, estilo, descripción, etiquetas y otros metadatos. Mantiene versos, coros, repeticiones y texto ambiguo sin adivinar su significado. Funciona al pegar, al salir del campo y antes de guardar o generar. El formulario conserva el último texto original modificado para consultarlo o restaurarlo durante la sesión. Las estructuras sin etiquetas claras pueden necesitar revisión manual. No usa un servicio externo para analizar el texto.
