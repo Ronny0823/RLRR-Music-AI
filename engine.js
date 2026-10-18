@@ -24,7 +24,7 @@
     return new Blob([buffer],{type:'audio/wav'});
   }
   function render({genre='bachata',bpm=128,duration=24,seed='RLRR'}={}) {
-    if(!presets[genre] || !Number.isFinite(+bpm) || +bpm<60 || +bpm>180 || ![24,40,60].includes(+duration))throw Error('Parámetros de audio inválidos.');
+    if(!presets[genre] || !Number.isFinite(+bpm) || +bpm<60 || +bpm>180 || (!Number.isFinite(+duration) || +duration<12 || +duration>600))throw Error('Parámetros de audio inválidos.');
     const p=presets[genre], random=randomFor(String(seed)), samples=new Float32Array(Math.round(duration*rate)), beat=60/bpm;
     function tone(time,note,len,amp,kind='pluck') {
       const start=Math.round(time*rate), count=Math.min(Math.round(len*rate),samples.length-start), f=hz(note);
@@ -72,4 +72,5 @@
     return wav(samples);
   }
   globalThis.RLRRAudio = { render, presets, rate };
+  if(typeof WorkerGlobalScope!=='undefined' && globalThis instanceof WorkerGlobalScope)globalThis.onmessage=event=>{try{globalThis.postMessage({blob:render(event.data)});}catch(error){globalThis.postMessage({error:error.message});}};
 })();
