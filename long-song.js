@@ -20,21 +20,7 @@
   }
   async function join(results,onStatus=()=>{}){
     if(results.length===1)return{blob:results[0].blob,extension:results[0].extension};
-    const Context=globalThis.OfflineAudioContext||globalThis.webkitOfflineAudioContext;
-    if(!Context)throw Error('Este navegador no permite unir los audios. Abre la página en Chrome para generar la canción larga.');
-    const rate=24000,context=new Context(1,1,rate),chunks=[];let total=0;
-    for(let index=0;index<results.length;index++){
-      onStatus(`Uniendo el audio ${index+1} de ${results.length}…`);
-      const decoded=await context.decodeAudioData(await results[index].blob.arrayBuffer());
-      if(decoded.sampleRate!==rate)throw Error('No se pudo preparar el audio para unirlo.');
-      const mono=new Float32Array(decoded.length);
-      for(let ch=0;ch<decoded.numberOfChannels;ch++){const channel=decoded.getChannelData(ch);for(let i=0;i<mono.length;i++)mono[i]+=channel[i]/decoded.numberOfChannels;}
-      // Very short edge fades prevent clicks; no overlapping or removed lyric segments.
-      const fade=Math.min(120,Math.floor(mono.length/2));for(let i=0;i<fade;i++){mono[i]*=i/fade;mono[mono.length-1-i]*=i/fade;}
-      chunks.push(mono);total+=mono.length;
-    }
-    const samples=new Float32Array(total);let offset=0;for(const chunk of chunks){samples.set(chunk,offset);offset+=chunk.length;}
-    return{blob:RLRRAudio.encodeWav(samples,rate),extension:'wav'};
+    return RLRRQuality.render(results,onStatus);
   }
   async function generate(project,{signal,onStatus=()=>{},generatePart}={}){
     const parts=plan(project),results=[];

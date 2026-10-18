@@ -38,9 +38,9 @@
     const sound=RLRRSound.detect(project.style);
     const arrangement=genrePrompts[project.genre].replace(/, (?:emotional male lead singer|lively male lead singer and backing vocals|expressive emotional male lead singer|male lead singer and community backing vocals).*$/,'');
     const vocal=sound.voice==='Voz femenina'?'female lead singer, Spanish singing':sound.voice==='Voz masculina'?'male lead singer, Spanish singing':sound.voice==='Dueto'?'vocal duet, Spanish singing':'lead vocals following the user style, Spanish singing';
-    const prompt=`${arrangement}, ${vocal}, ${project.bpm} BPM. ${project.style}`;
+    const prompt=`${arrangement}, ${vocal}, ${project.bpm} BPM. ${project.style}. Clean studio recording, clear lead vocals, detailed natural instruments, balanced stereo mix, controlled peaks, subtle room ambience.`;
     // Ordered signature verified against this demo's /gradio_api/info endpoint.
-    const data=[project.duration,prompt,lyrics,60,15,'euler','apg',10,'',.5,0,3,true,false,true,'',0,0,false,.5,null,'none'];
+    const data=[project.duration,prompt,lyrics,80,15,'euler','apg',10,'',.5,0,3,true,false,true,'',0,0,false,.5,null,'none'];
     const controller=new AbortController();
     const abort=()=>controller.abort(signal?.reason);signal?.addEventListener('abort',abort,{once:true});
     if(signal?.aborted)abort();
@@ -68,6 +68,12 @@
       return {blob,url:file.url,extension:(file.name||'').toLowerCase().endsWith('.wav')?'wav':'mp3'};
     }finally{clearTimeout(timer);events?.close();signal?.removeEventListener('abort',abort);}
   }
-  async function generate(project,options={}){if(!Number.isFinite(project.duration)||project.duration>600)throw Error('La duración estimada supera 10 minutos. Divide esta letra en proyectos para continuar.');return project.duration>240?RLRRLong.generate(project,{...options,generatePart:generateSingle}):generateSingle(project,options);}
+  async function generate(project,options={}){
+    if(!Number.isFinite(project.duration)||project.duration>600)throw Error('La duración estimada supera 10 minutos. Divide esta letra en proyectos para continuar.');
+    if(project.duration>240)return RLRRLong.generate(project,{...options,generatePart:generateSingle});
+    const original=await generateSingle(project,options);
+    try{return{...original,...await RLRRQuality.render([original],options.onStatus)};}catch(error){if(options.signal?.aborted)throw error;return{...original,processed:false,audioQuality:'Audio original del motor',processingNote:'El navegador no pudo preparar el WAV. Se conserva el archivo original del motor.'};}
+  }
+
   globalThis.RLRRAI={generate,generateSingle,prepareLyrics,readableError,base,maxDuration:600};
 })();

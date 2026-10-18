@@ -7,13 +7,14 @@
   <meta name="description" content="RLRR Music Studio: prepara tus letras, explora bocetos instrumentales y escucha tu música en un estudio independiente.">
   <title>RLRR · Music Studio</title>
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./style.css?v=auto-style-1">
-  <script src="./sound.js?v=auto-style-1" defer></script>
-  <script src="./timing.js?v=auto-style-1" defer></script>
-  <script src="./engine.js?v=auto-style-1" defer></script>
-  <script src="./ai.js?v=auto-style-1" defer></script>
-  <script src="./long-song.js?v=auto-style-1" defer></script>
-  <script src="./app.js?v=auto-style-1" defer></script>
+  <link rel="stylesheet" href="./style.css?v=clean-stereo-1">
+  <script src="./sound.js?v=clean-stereo-1" defer></script>
+  <script src="./timing.js?v=clean-stereo-1" defer></script>
+  <script src="./engine.js?v=clean-stereo-1" defer></script>
+  <script src="./ai.js?v=clean-stereo-1" defer></script>
+  <script src="./quality.js?v=clean-stereo-1" defer></script>
+  <script src="./long-song.js?v=clean-stereo-1" defer></script>
+  <script src="./app.js?v=clean-stereo-1" defer></script>
 </head>
 <body>
   <aside class="sidebar">
@@ -34,7 +35,7 @@
           <div class="label-line"><label for="style">Estilo musical</label><span id="style-count">0 / 1000</span></div><textarea id="style" rows="3" maxlength="1000" placeholder="Ejemplo: cumbia colombiana, voz femenina, gaitas y tambora, 94 BPM…"></textarea><p class="style-help">Escribe o pega el estilo. El género, la voz solicitada y el ritmo se interpretan automáticamente; tu texto se conserva completo.</p>
           <div class="label-line"><label for="lyrics">Tu letra</label><button type="button" id="structure" class="text-button">+ Añadir estructura</button></div><textarea id="lyrics" rows="8" maxlength="20000" placeholder="[Verso 1]&#10;Escribe aquí lo que llevas dentro…&#10;&#10;[Coro]&#10;La parte que nadie dejará de cantar."></textarea>
           <div class="settings"><div><label for="bpm">Ritmo automático <span id="bpm-value">128 BPM</span></label><input id="bpm" type="range" disabled aria-label="Ritmo calculado desde el estilo" min="60" max="180" value="128"></div><div><label for="duration">Duración automática</label><output id="duration" aria-live="polite" aria-describedby="duration-help"></output><p id="duration-help" class="duration-help">Se calcula según tu letra y el ritmo.</p></div></div>
-          <div class="generation-note"><span>✦</span><p><strong>Tu letra, cantada con música.</strong> Al crear, se envían tu letra, estilo y ajustes a la demo pública de ACE-Step en Hugging Face para generar voz y acompañamiento. Las letras largas se generan en partes y se unen automáticamente, sin recortar tu texto. Pueden variar la voz y la melodía entre las partes. Sujeto a colas y cuotas gratuitas.</p></div>
+          <div class="generation-note"><span>✦</span><p><strong>Tu letra, cantada con música.</strong> Se priorizan una voz clara y una mezcla equilibrada. Al crear, se envían tu letra, estilo y ajustes a la demo pública de ACE-Step en Hugging Face para generar voz y acompañamiento. Las letras largas se generan en partes y se unen automáticamente, sin recortar tu texto. Pueden variar la voz y la melodía entre las partes. Sujeto a colas y cuotas gratuitas.</p></div>
           <button class="primary" id="generate" type="submit">✦ Crear canción con voz <span>→</span></button>
           <p id="generation-status" role="status" aria-live="polite" class="generation-status" hidden></p><button type="button" id="cancel-generation" class="text-button" hidden>Detener espera</button>
           <button class="secondary local-sketch" id="local-generate" type="button">♫ Probar solo un boceto instrumental local</button>
