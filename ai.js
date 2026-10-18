@@ -30,7 +30,7 @@
     if(/sign.?in|log.?in|unauthorized|authentication|401|403/i.test(raw))return 'La demo requiere acceso o no acepta esta solicitud. Puedes abrir ACE-Step para revisar el acceso. No se ha cobrado nada.';
     return 'El motor no pudo terminar la canción. Conserva tu proyecto y vuelve a intentarlo más tarde.';
   }
-  async function generate(project,{signal,onStatus=()=>{}}={}){
+  async function generateSingle(project,{signal,onStatus=()=>{}}={}){
     if(!genrePrompts[project.genre]||!project.lyrics.trim())throw Error('Escribe una letra para crear la canción cantada.');
     if(!Number.isFinite(project.duration)||project.duration<12||project.duration>240)throw Error('La demo admite hasta 4 minutos por canción. Tu letra necesita más tiempo: acórtala o divídela en proyectos, sin recortarla automáticamente.');
     const lyrics=prepareLyrics(project);
@@ -61,5 +61,6 @@
       return {blob,url:file.url,extension:(file.name||'').toLowerCase().endsWith('.wav')?'wav':'mp3'};
     }finally{clearTimeout(timer);events?.close();signal?.removeEventListener('abort',abort);}
   }
-  globalThis.RLRRAI={generate,prepareLyrics,readableError,base,maxDuration:240};
+  async function generate(project,options={}){if(!Number.isFinite(project.duration)||project.duration>600)throw Error('La duración estimada supera 10 minutos. Divide esta letra en proyectos para continuar.');return project.duration>240?RLRRLong.generate(project,{...options,generatePart:generateSingle}):generateSingle(project,options);}
+  globalThis.RLRRAI={generate,generateSingle,prepareLyrics,readableError,base,maxDuration:600};
 })();

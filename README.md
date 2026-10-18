@@ -16,7 +16,7 @@ El botón **Crear canción con voz** envía la letra, el estilo, el género, el 
 
 La API de esta demo es ACE-Step v1, no ACE-Step 1.5. Se comprobó su firma pública `/gradio_api/info`, una generación real y la autorización CORS desde el origen de GitHub Pages. Se usa POST más eventos SSE de Gradio, y se descarga el resultado al navegador. La disponibilidad, cuota gratuita y cola dependen del proveedor; puede denegar peticiones o cambiar su API. No hay garantía de reproducir exactamente la letra, duración, género o pronunciación, ni de igualar la calidad de Suno.
 
-- Máximo de esta demo: 240 segundos. Si la estimación supera ese tiempo, la interfaz pide acortar o dividir la letra, sin recortarla automáticamente.
+- Cada solicitud a la demo admite 240 segundos. Para letras de más de 4 minutos y hasta 10 minutos, la página divide automáticamente el texto completo en partes, genera cada parte con voz y música y une los audios en un WAV mono de 24 kHz. Se conservan las líneas y las repeticiones; no se recorta la letra. La voz, melodía o interpretación pueden cambiar entre las partes: no es una extensión musical continua garantizada. Si la cuota impide terminar, se identifica el resultado como parcial y se ofrece el audio ya completado, sin anunciar una canción completa.
 - Versos, coros y otras secciones se traducen a etiquetas del modelo; las repeticiones explícitas se expanden antes de enviarlas.
 - Los mensajes de progreso y error son visibles y no se sustituyen por un boceto falso si el servidor falla.
 - **Detener espera** cierra la conexión en esta página; la demo puede continuar el trabajo remoto. La espera máxima es de 10 minutos.
@@ -43,3 +43,5 @@ La duración se recalcula al cambiar la letra, el género o el ritmo, y al abrir
 ## Visualización del resultado
 
 Al recibir el audio se abre automáticamente un reproductor sobre la página, también en móviles. Incluye título, controles de reproducción y descarga. Puede cerrarse y reabrirse con «Escuchar mi canción» o con el botón fijo «Tu canción está lista». Durante la generación se muestra un aviso fijo de progreso. La reproducción requiere pulsar el botón para respetar las restricciones de audio de los navegadores móviles.
+
+La ruta para letras largas utiliza el mismo motor v1 previamente comprobado. La demo v1.5 fue evaluada pero no se añadió porque su solicitud de GPU excedió la cuota anónima disponible en la prueba.

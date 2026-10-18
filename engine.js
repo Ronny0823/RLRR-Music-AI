@@ -14,12 +14,12 @@
     for (const char of text) value = Math.imul(value ^ char.charCodeAt(0), 16777619);
     return () => { value |= 0; value = value + 0x6D2B79F5 | 0; let t = Math.imul(value ^ value >>> 15, 1 | value); t ^= t + Math.imul(t ^ t >>> 7, 61 | t); return ((t ^ t >>> 14) >>> 0) / 4294967296; };
   }
-  function wav(samples) {
+  function wav(samples,sampleRate=rate) {
     const buffer = new ArrayBuffer(44 + samples.length * 2), v = new DataView(buffer);
     const put = (offset, s) => { for(let i=0;i<s.length;i++)v.setUint8(offset+i,s.charCodeAt(i)); };
     put(0,'RIFF'); v.setUint32(4,36+samples.length*2,true); put(8,'WAVE'); put(12,'fmt ');
-    v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,rate,true);
-    v.setUint32(28,rate*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);put(36,'data');v.setUint32(40,samples.length*2,true);
+    v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,sampleRate,true);
+    v.setUint32(28,sampleRate*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);put(36,'data');v.setUint32(40,samples.length*2,true);
     for(let i=0;i<samples.length;i++)v.setInt16(44+i*2,Math.max(-1,Math.min(1,samples[i]))*32767,true);
     return new Blob([buffer],{type:'audio/wav'});
   }
@@ -71,6 +71,6 @@
     for(let i=0;i<samples.length;i++){const t=i/rate;samples[i]*=gain*Math.min(1,t/.04,(duration-t)/.8);}
     return wav(samples);
   }
-  globalThis.RLRRAudio = { render, presets, rate };
+  globalThis.RLRRAudio = { render, presets, rate, encodeWav:wav };
   if(typeof WorkerGlobalScope!=='undefined' && globalThis instanceof WorkerGlobalScope)globalThis.onmessage=event=>{try{globalThis.postMessage({blob:render(event.data)});}catch(error){globalThis.postMessage({error:error.message});}};
 })();
