@@ -25,7 +25,7 @@
   }
   function readableError(value){
     const raw=typeof value==='string'?value:JSON.stringify(value||'');
-    if(/quota|exceeded|zerogpu|gpu.*limit|rate.?limit|too many/i.test(raw)){const wait=raw.match(/(?:try again in|retry after)\s+([0-9:]+)/i);return `El proveedor agotó la cuota gratuita de generación.${wait?' Podrás reintentar en '+wait[1]+'.':' Espera a que se renueve la cuota.'} No se ha cobrado nada.`;}
+    if(/quota|exceeded|zerogpu|gpu.*limit|rate.?limit|too many/i.test(raw)){const wait=raw.match(/(?:try again in|retry after)\s+([0-9:]+)/i);return `El proveedor agotó la cuota gratuita de generación.${wait&&/[1-9]/.test(wait[1])?' Podrás reintentar en '+wait[1]+'.':' Espera a que se renueve la cuota.'} No se ha cobrado nada.`;}
     if(/queue.*full/i.test(raw))return 'La cola del proveedor está llena. Espera y vuelve a probar.';
     if(/sign.?in|log.?in|unauthorized|authentication|401|403/i.test(raw))return 'La demo requiere acceso o no acepta esta solicitud. Puedes abrir ACE-Step para revisar el acceso. No se ha cobrado nada.';
     return 'El motor no pudo terminar la canción. Conserva tu proyecto y vuelve a intentarlo más tarde.';
