@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101016">
+  <meta name="description" content="RLRR Music Studio: prepara tus letras, explora bocetos instrumentales y escucha tu música en un estudio independiente.">
+  <title>RLRR · Music Studio</title>
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./engine.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="./" aria-label="RLRR Music Studio"><span class="brand-icon">R</span><span>RLRR<small>MUSIC STUDIO</small></span></a>
+    <div class="nav-label">TU ESPACIO CREATIVO</div>
+    <nav aria-label="Secciones"><button class="nav-item active" id="create-tab" aria-selected="true">✦ <span>Crear música</span></button><button class="nav-item" id="library-tab" aria-selected="false">♫ <span>Mis proyectos</span><span id="count" class="count">0</span></button></nav>
+    <div class="sidebar-bottom"><span class="status-dot"></span> Independiente por diseño<p>Tus letras y proyectos se guardan en este navegador.</p><a href="https://github.com/Ronny0823/RLRR-Music-AI" target="_blank" rel="noopener">Ver proyecto en GitHub ↗</a></div>
+  </aside>
+  <main>
+    <header><span class="breadcrumb">Tu estudio <span>/</span> <b id="section-label">Crear música</b></span><div class="header-actions"><button type="button" id="new-project" class="secondary">+ Nuevo proyecto</button><span class="profile">RR</span></div></header>
+    <section id="create-view">
+      <div class="heading"><div><p class="eyebrow">HECHO PARA TUS IDEAS</p><h1>Que tu próxima canción<br><span>empiece aquí.</span></h1><p class="intro">Dale forma a esa historia que merece ser escuchada.</p></div><div class="sound-art" aria-hidden="true"><div class="vinyl"><div>RLRR<small>ORIGINALS</small></div></div><span class="art-note">DE LA IDEA AL SONIDO</span></div></div>
+      <div class="studio-grid">
+        <form id="studio" class="panel editor">
+          <div class="panel-top"><h2>Tu nueva creación</h2><span class="tag">ESTUDIO LOCAL</span></div>
+          <label for="title">Título de la canción</label><input id="title" maxlength="120" placeholder="Ponle nombre a tu historia…" autocomplete="off">
+          <label id="genre-label">Elige tu sonido</label><div class="genres" role="group" aria-labelledby="genre-label"><button type="button" class="genre selected" data-genre="bachata" aria-pressed="true">♬ Bachata</button><button type="button" class="genre" data-genre="merengue" aria-pressed="false">✺ Merengue</button><button type="button" class="genre" data-genre="balada" aria-pressed="false">♡ Balada</button><button type="button" class="genre" data-genre="cumbia" aria-pressed="false">☀ Cumbia</button></div>
+          <div class="label-line"><label for="style">Estilo musical</label><span id="style-count">0 / 1000</span></div><textarea id="style" rows="3" maxlength="1000" placeholder="Instrumentos, ambiente e interpretación…"></textarea><button class="text-button" type="button" id="style-reset">↻ Usar estilo sugerido del género</button>
+          <div class="label-line"><label for="lyrics">Tu letra</label><button type="button" id="structure" class="text-button">+ Añadir estructura</button></div><textarea id="lyrics" rows="8" maxlength="20000" placeholder="[Verso 1]&#10;Escribe aquí lo que llevas dentro…&#10;&#10;[Coro]&#10;La parte que nadie dejará de cantar."></textarea>
+          <div class="settings"><div><label for="bpm">Ritmo <span id="bpm-value">128 BPM</span></label><input id="bpm" type="range" min="60" max="180" value="128"></div><div><label for="duration">Duración del boceto</label><select id="duration"><option value="24">24 segundos</option><option value="40">40 segundos</option><option value="60">60 segundos</option></select></div></div>
+          <div class="generation-note"><span>ⓘ</span><p><strong>Boceto instrumental, sin voz.</strong> Crea una base sintetizada en tu dispositivo. La letra y el estilo se guardan como guía; este boceto no los canta ni interpreta sus instrucciones.</p></div>
+          <button class="primary" id="generate" type="submit">✦ Crear boceto instrumental <span>→</span></button>
+          <div class="form-footer"><button type="button" id="save" class="secondary">Guardar proyecto</button><button type="button" id="export" class="secondary">Exportar letra y estilo</button></div>
+        </form>
+        <div class="right-column"><section class="panel listening"><div class="panel-top"><h2>Escucha tu idea</h2><span class="live-dot"></span></div><div class="cover"><div class="cover-lines" aria-hidden="true"></div><span class="cover-badge">RLRR ORIGINALS</span><div class="cover-title">Historias que<br>se vuelven <i>música.</i></div><span class="cover-bottom">TU PRÓXIMA CREACIÓN</span></div><div id="player-empty"><h3>Todo empieza con una idea</h3><p>Crea un boceto o abre un audio de tu dispositivo para escucharlo aquí.</p></div><div id="player-ready" hidden><h3 id="track-title"></h3><p id="track-info"></p><audio id="audio" controls preload="metadata"></audio><a id="download" class="secondary download" download>↓ Descargar audio</a></div><label class="upload" for="audio-file">↑ Abrir mi audio<input id="audio-file" type="file" accept="audio/*,.mp3,.wav,.m4a,.ogg,.flac"></label><p class="small-muted">El audio que abras permanece en tu dispositivo.</p></section>
+        <section class="panel ai-state"><div class="ai-symbol">✦</div><div><h3>Canciones cantadas con IA</h3><span class="pending">MOTOR PENDIENTE</span><p>Esta versión todavía no genera voz ni canciones completas como Suno. GitHub aloja la web; la generación cantada necesita un motor musical adicional.</p></div></section>
+        <div class="creative-note"><span>“</span>Una guitarra puede decir<br>lo que la voz no se atreve.</div></div>
+      </div>
+    </section>
+    <section id="library-view" hidden><div class="library-heading"><div><p class="eyebrow">CADA HISTORIA TIENE SU LUGAR</p><h1>Mis proyectos<span>.</span></h1><p class="intro">Tus letras, estilos y próximos comienzos.</p></div><div class="library-actions"><button class="secondary" id="backup">↓ Exportar copia</button><label class="secondary" for="import-file">↑ Importar copia<input id="import-file" type="file" accept="application/json,.json" hidden></label></div></div><p class="library-help">Guardados en este navegador. Exporta una copia para conservarlos o pasarlos a otro dispositivo. Los archivos de audio se descargan por separado.</p><div id="projects"></div></section>
+    <footer>RLRR MUSIC STUDIO <span>Tu música. Tu historia. Tu espacio.</span></footer>
+  </main>
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
