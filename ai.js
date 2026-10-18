@@ -3,6 +3,7 @@
   'use strict';
   const base='https://ace-step-ace-step.hf.space';
   const genrePrompts={
+    libre:'Music following the user musical style exactly, original composition',
     bachata:'Dominican bachata, expressive requinto lead guitar, rhythm guitar, bongo, guira, warm bass, emotional male lead singer, heartfelt Spanish singing',
     merengue:'Dominican merengue, tambora, guira, energetic brass, rhythmic bass, lively male lead singer and backing vocals, Spanish singing',
     balada:'Romantic Latin ballad, warm piano, acoustic guitar, gentle drums, expressive emotional male lead singer, Spanish singing',
@@ -34,7 +35,10 @@
     if(!genrePrompts[project.genre]||!project.lyrics.trim())throw Error('Escribe una letra para crear la canción cantada.');
     if(!Number.isFinite(project.duration)||project.duration<12||project.duration>240)throw Error('La demo admite hasta 4 minutos por canción. Tu letra necesita más tiempo: acórtala o divídela en proyectos, sin recortarla automáticamente.');
     const lyrics=prepareLyrics(project);
-    const prompt=`${genrePrompts[project.genre]}, ${project.bpm} BPM. ${project.style}`;
+    const sound=RLRRSound.detect(project.style);
+    const arrangement=genrePrompts[project.genre].replace(/, (?:emotional male lead singer|lively male lead singer and backing vocals|expressive emotional male lead singer|male lead singer and community backing vocals).*$/,'');
+    const vocal=sound.voice==='Voz femenina'?'female lead singer, Spanish singing':sound.voice==='Voz masculina'?'male lead singer, Spanish singing':sound.voice==='Dueto'?'vocal duet, Spanish singing':'lead vocals following the user style, Spanish singing';
+    const prompt=`${arrangement}, ${vocal}, ${project.bpm} BPM. ${project.style}`;
     // Ordered signature verified against this demo's /gradio_api/info endpoint.
     const data=[project.duration,prompt,lyrics,60,15,'euler','apg',10,'',.5,0,3,true,false,true,'',0,0,false,.5,null,'none'];
     const controller=new AbortController();

@@ -7,12 +7,13 @@
   <meta name="description" content="RLRR Music Studio: prepara tus letras, explora bocetos instrumentales y escucha tu música en un estudio independiente.">
   <title>RLRR · Music Studio</title>
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./style.css?v=long-song-2">
-  <script src="./timing.js?v=long-song-2" defer></script>
-  <script src="./engine.js?v=long-song-2" defer></script>
-  <script src="./ai.js?v=long-song-2" defer></script>
-  <script src="./long-song.js?v=long-song-2" defer></script>
-  <script src="./app.js?v=long-song-2" defer></script>
+  <link rel="stylesheet" href="./style.css?v=auto-style-1">
+  <script src="./sound.js?v=auto-style-1" defer></script>
+  <script src="./timing.js?v=auto-style-1" defer></script>
+  <script src="./engine.js?v=auto-style-1" defer></script>
+  <script src="./ai.js?v=auto-style-1" defer></script>
+  <script src="./long-song.js?v=auto-style-1" defer></script>
+  <script src="./app.js?v=auto-style-1" defer></script>
 </head>
 <body>
   <aside class="sidebar">
@@ -29,10 +30,10 @@
         <form id="studio" class="panel editor">
           <div class="panel-top"><h2>Tu nueva creación</h2><span class="tag">ESTUDIO IA</span></div>
           <label for="title">Título de la canción</label><input id="title" maxlength="120" placeholder="Ponle nombre a tu historia…" autocomplete="off">
-          <label id="genre-label">Elige tu sonido</label><div class="genres" role="group" aria-labelledby="genre-label"><button type="button" class="genre selected" data-genre="bachata" aria-pressed="true">♬ Bachata</button><button type="button" class="genre" data-genre="merengue" aria-pressed="false">✺ Merengue</button><button type="button" class="genre" data-genre="balada" aria-pressed="false">♡ Balada</button><button type="button" class="genre" data-genre="cumbia" aria-pressed="false">☀ Cumbia</button></div>
-          <div class="label-line"><label for="style">Estilo musical</label><span id="style-count">0 / 1000</span></div><textarea id="style" rows="3" maxlength="1000" placeholder="Instrumentos, ambiente e interpretación…"></textarea><button class="text-button" type="button" id="style-reset">↻ Usar estilo sugerido del género</button>
+          <label id="genre-label">Sonido detectado automáticamente</label><div class="genres" aria-labelledby="genre-label"><span class="genre selected" data-genre="bachata">♬ Bachata</span><span class="genre" data-genre="merengue">✺ Merengue</span><span class="genre" data-genre="balada">♡ Balada</span><span class="genre" data-genre="cumbia">☀ Cumbia</span><span class="genre" data-genre="libre">♫ Otro estilo</span></div><p id="sound-detected" class="style-help" role="status" aria-live="polite"></p>
+          <div class="label-line"><label for="style">Estilo musical</label><span id="style-count">0 / 1000</span></div><textarea id="style" rows="3" maxlength="1000" placeholder="Ejemplo: cumbia colombiana, voz femenina, gaitas y tambora, 94 BPM…"></textarea><p class="style-help">Escribe o pega el estilo. El género, la voz solicitada y el ritmo se interpretan automáticamente; tu texto se conserva completo.</p>
           <div class="label-line"><label for="lyrics">Tu letra</label><button type="button" id="structure" class="text-button">+ Añadir estructura</button></div><textarea id="lyrics" rows="8" maxlength="20000" placeholder="[Verso 1]&#10;Escribe aquí lo que llevas dentro…&#10;&#10;[Coro]&#10;La parte que nadie dejará de cantar."></textarea>
-          <div class="settings"><div><label for="bpm">Ritmo <span id="bpm-value">128 BPM</span></label><input id="bpm" type="range" min="60" max="180" value="128"></div><div><label for="duration">Duración automática</label><output id="duration" aria-live="polite" aria-describedby="duration-help"></output><p id="duration-help" class="duration-help">Se calcula según tu letra y el ritmo.</p></div></div>
+          <div class="settings"><div><label for="bpm">Ritmo automático <span id="bpm-value">128 BPM</span></label><input id="bpm" type="range" disabled aria-label="Ritmo calculado desde el estilo" min="60" max="180" value="128"></div><div><label for="duration">Duración automática</label><output id="duration" aria-live="polite" aria-describedby="duration-help"></output><p id="duration-help" class="duration-help">Se calcula según tu letra y el ritmo.</p></div></div>
           <div class="generation-note"><span>✦</span><p><strong>Tu letra, cantada con música.</strong> Al crear, se envían tu letra, estilo y ajustes a la demo pública de ACE-Step en Hugging Face para generar voz y acompañamiento. Las letras largas se generan en partes y se unen automáticamente, sin recortar tu texto. Pueden variar la voz y la melodía entre las partes. Sujeto a colas y cuotas gratuitas.</p></div>
           <button class="primary" id="generate" type="submit">✦ Crear canción con voz <span>→</span></button>
           <p id="generation-status" role="status" aria-live="polite" class="generation-status" hidden></p><button type="button" id="cancel-generation" class="text-button" hidden>Detener espera</button>

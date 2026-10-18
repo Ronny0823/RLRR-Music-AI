@@ -1,7 +1,7 @@
 /* Heuristic Spanish lyric timing. Estimates an arrangement, not sung alignment. */
 (() => {
   'use strict';
-  const syllablesPerBeat = { bachata:1.5, merengue:1.8, balada:1.8, cumbia:1.4 };
+  const syllablesPerBeat = { bachata:1.5, merengue:1.8, balada:1.8, cumbia:1.4, libre:1.6 };
   const clean = text => text.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
   function estimate({lyrics='',genre='bachata',bpm=128}={}) {
     if(!Object.hasOwn(syllablesPerBeat,genre)||!Number.isFinite(+bpm)||+bpm<60||+bpm>180)throw Error('Ritmo inválido.');

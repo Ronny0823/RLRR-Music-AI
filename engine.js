@@ -8,6 +8,7 @@
     balada: { bpm:76, chords:[[57,60,64],[53,57,60],[48,52,55],[55,59,62]], melody:[76,74,72,71,69,72,74,76] },
     cumbia: { bpm:94, chords:[[57,60,64],[55,59,62],[53,57,60],[52,56,59]], melody:[81,79,76,74,72,74,76,79] }
   };
+  presets.libre={...presets.balada,bpm:100};
   const hz = n => 440 * 2 ** ((n-69)/12);
   function randomFor(text) {
     let value = 2166136261;
