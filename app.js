@@ -36,7 +36,7 @@
   $('play-song').onclick=async()=>{try{if($('audio').paused)await $('audio').play();else $('audio').pause();}catch{$('playback-status').textContent='Pulsa el control de reproducción del audio o descárgalo para escucharlo en tu dispositivo.';}};
   $('audio').addEventListener('play',()=>{$('play-song').textContent='Ⅱ Pausar canción';});$('audio').addEventListener('pause',()=>{$('play-song').textContent='▶ Reproducir canción';});
 
-  function renderAudio(options){if(typeof Worker==='undefined'||location.protocol==='file:')return Promise.resolve(RLRRAudio.render(options));return new Promise((resolve,reject)=>{const worker=new Worker('./engine.js?v=long-song-1');worker.onmessage=event=>{worker.terminate();event.data.error?reject(new Error(event.data.error)):resolve(event.data.blob);};worker.onerror=()=>{worker.terminate();reject(new Error('No se pudo preparar el audio en este navegador.'));};worker.postMessage(options);});}
+  function renderAudio(options){if(typeof Worker==='undefined'||location.protocol==='file:')return Promise.resolve(RLRRAudio.render(options));return new Promise((resolve,reject)=>{const worker=new Worker('./engine.js?v=long-song-2');worker.onmessage=event=>{worker.terminate();event.data.error?reject(new Error(event.data.error)):resolve(event.data.blob);};worker.onerror=()=>{worker.terminate();reject(new Error('No se pudo preparar el audio en este navegador.'));};worker.postMessage(options);});}
   let activeGeneration=null;
   function status(message){$('generation-status').hidden=false;$('generation-status').textContent=message;$('job-message').textContent=message;}
   function busy(value){$('generate').disabled=value;$('local-generate').disabled=value;$('job-indicator').hidden=!value;$('show-song').hidden=value||!audioUrl;}

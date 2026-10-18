@@ -2,7 +2,6 @@
 (() => {
   'use strict';
   const base='https://ace-step-ace-step.hf.space';
-  const endpoint=`${base}/gradio_api/call/__call__`;
   const genrePrompts={
     bachata:'Dominican bachata, expressive requinto lead guitar, rhythm guitar, bongo, guira, warm bass, emotional male lead singer, heartfelt Spanish singing',
     merengue:'Dominican merengue, tambora, guira, energetic brass, rhythmic bass, lively male lead singer and backing vocals, Spanish singing',
@@ -26,7 +25,8 @@
   }
   function readableError(value){
     const raw=typeof value==='string'?value:JSON.stringify(value||'');
-    if(/quota|exceeded|zerogpu|gpu.*limit|rate.?limit|too many/i.test(raw))return 'La demo alcanzó su cuota o límite de uso. Espera y vuelve a probar; también puedes abrir la demo de ACE-Step. No se ha cobrado nada.';
+    if(/quota|exceeded|zerogpu|gpu.*limit|rate.?limit|too many/i.test(raw)){const wait=raw.match(/(?:try again in|retry after)\s+([0-9:]+)/i);return `El proveedor agotó la cuota gratuita de generación.${wait?' Podrás reintentar en '+wait[1]+'.':' Espera a que se renueve la cuota.'} No se ha cobrado nada.`;}
+    if(/queue.*full/i.test(raw))return 'La cola del proveedor está llena. Espera y vuelve a probar.';
     if(/sign.?in|log.?in|unauthorized|authentication|401|403/i.test(raw))return 'La demo requiere acceso o no acepta esta solicitud. Puedes abrir ACE-Step para revisar el acceso. No se ha cobrado nada.';
     return 'El motor no pudo terminar la canción. Conserva tu proyecto y vuelve a intentarlo más tarde.';
   }
@@ -44,13 +44,16 @@
     let events;
     try{
       onStatus('Enviando letra y estilo a ACE-Step…');
-      const response=await fetch(endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data}),credentials:'omit',signal:controller.signal});
+      const sessionHash='rlrr_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2);
+      const configResponse=await fetch(`${base}/config`,{credentials:'omit',signal:controller.signal});if(!configResponse.ok)throw Error('No se pudo consultar el motor musical. Vuelve a probar más tarde.');
+      const config=await configResponse.json(),dependency=config.dependencies?.find(item=>item.api_name==='__call__');if(!Number.isInteger(dependency?.id)||dependency.inputs?.length!==data.length)throw Error('El proveedor cambió su interfaz. La conexión necesita actualizarse.');
+      const response=await fetch(`${base}/gradio_api/queue/join`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data,fn_index:dependency.id,session_hash:sessionHash}),credentials:'omit',signal:controller.signal});
       if(!response.ok)throw Error(readableError(`${response.status} ${await response.text()}`));
       const job=await response.json();if(!/^[a-f0-9]{32}$/i.test(job.event_id||''))throw Error('El motor no devolvió una solicitud válida.');
       onStatus('En cola o creando voz, ritmo e instrumentos. Puede tardar varios minutos…');
       const file=await new Promise((resolve,reject)=>{
-        events=new EventSource(`${endpoint}/${job.event_id}`);
-        events.addEventListener('complete',event=>{try{const result=JSON.parse(event.data);if(!result?.[0]?.url)throw Error('El motor no devolvió audio.');const url=new URL(result[0].url);if(url.origin!==base||!url.pathname.startsWith('/gradio_api/file='))throw Error('El motor devolvió una dirección inesperada.');resolve({url:url.href,name:result[0].orig_name});}catch(error){reject(error);}});
+        events=new EventSource(`${base}/gradio_api/queue/data?session_hash=${encodeURIComponent(sessionHash)}`);
+        events.addEventListener('message',event=>{try{const message=JSON.parse(event.data);if(message.msg==='queue_full')throw Error(readableError('queue full'));if(message.msg!=='process_completed')return;if(message.success===false||message.output?.error)throw Error(readableError(message.output?.error));const result=message.output?.data;if(!result?.[0]?.url)throw Error('El motor no devolvió audio.');const url=new URL(result[0].url);if(url.origin!==base||!url.pathname.startsWith('/gradio_api/file='))throw Error('El motor devolvió una dirección inesperada.');resolve({url:url.href,name:result[0].orig_name});}catch(error){reject(error);}});
         events.addEventListener('error',event=>{events.close();reject(new Error(event.data?readableError(event.data):'La conexión con ACE-Step se interrumpió. Guarda tu proyecto y vuelve a probar.'));});
         controller.signal.addEventListener('abort',()=>{events.close();reject(controller.signal.reason||new DOMException('Cancelado','AbortError'));},{once:true});
         if(controller.signal.aborted){events.close();reject(controller.signal.reason||new DOMException('Cancelado','AbortError'));}
