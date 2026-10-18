@@ -39,3 +39,7 @@ Abrir `index.html` en un navegador moderno. También se puede servir la carpeta 
 Los proyectos se guardan solo al pulsar **Guardar proyecto**. Exportar periódicamente una copia: borrar datos del navegador o cambiar de dispositivo no conserva localStorage. Los audios se descargan por separado y no forman parte del respaldo JSON. No hay sincronización entre dispositivos. La edición, los proyectos y los bocetos instrumentales locales funcionan en el dispositivo. Solo al crear la canción con voz se envían la letra y los ajustes a la demo externa y se descarga su resultado. GitHub sirve los archivos y recibe las visitas normales de la página.
 
 La duración se recalcula al cambiar la letra, el género o el ritmo, y al abrir proyectos antiguos. Las copias anteriores siguen siendo compatibles; sus duraciones manuales se sustituyen por el cálculo automático. El audio se sintetiza en un Web Worker para mantener disponible la interfaz durante bocetos largos.
+
+## Visualización del resultado
+
+Al recibir el audio se abre automáticamente un reproductor sobre la página, también en móviles. Incluye título, controles de reproducción y descarga. Puede cerrarse y reabrirse con «Escuchar mi canción» o con el botón fijo «Tu canción está lista». Durante la generación se muestra un aviso fijo de progreso. La reproducción requiere pulsar el botón para respetar las restricciones de audio de los navegadores móviles.

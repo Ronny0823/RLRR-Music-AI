@@ -5,3 +5,12 @@
 #duration{display:block;background:#121218;border:1px solid #463750;border-radius:8px;padding:9px 12px;font-size:13px;color:#d8c6f5}.duration-help{font-size:9px;color:#9f92ac;line-height:1.5;margin:7px 0 0}
 
 .local-sketch{width:100%;margin-top:12px}.generation-status{color:#cfbaf0;font-size:11px;line-height:1.7;border-left:2px solid var(--purple);padding-left:12px;margin:14px 0}.ai-state a{color:#cdb2f3;text-decoration:underline}
+
+#song-dialog{color:var(--text);background:var(--panel);border:1px solid #79608f;border-radius:18px;padding:26px;width:min(520px,calc(100vw - 28px));max-height:calc(100dvh - 32px);overflow:auto;box-shadow:0 24px 100px #0009}
+#song-dialog::backdrop{background:#09060de0;backdrop-filter:blur(6px)}
+.dialog-heading{display:flex;align-items:center;justify-content:space-between;gap:16px}.dialog-heading .eyebrow{margin-bottom:6px}.dialog-heading h2{font-size:21px}.dialog-heading button{font-size:16px;padding:7px 12px}
+#song-dialog #track-title{font-size:23px;overflow-wrap:anywhere;margin-top:28px}#song-dialog #track-info{font-size:12px;color:var(--muted)}#song-dialog audio{margin:24px 0}#song-dialog #download{margin-top:12px;padding:14px}#playback-status{color:#b8aac9;font-size:11px;line-height:1.7;margin:18px 0 0}
+.song-shortcut,.job-indicator{position:fixed;bottom:18px;left:calc(50% + 100px);transform:translateX(-50%);z-index:40;max-width:calc(100vw - 32px);box-shadow:0 8px 40px #0008;border:1px solid #bca1e3;border-radius:12px;background:#342344;color:#eee1ff;padding:13px 20px;font-size:12px}.song-shortcut{cursor:pointer;background:var(--purple);color:#251633;font-weight:650}.job-indicator{display:flex;align-items:center;gap:12px;width:min(480px,calc(100vw - 32px))}.spinner{width:18px;height:18px;flex-shrink:0;border:2px solid #6c5287;border-top-color:#e0c5ff;border-radius:50%;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:820px){.song-shortcut,.job-indicator{left:50%}}@media(max-width:640px){#song-dialog{padding:22px}.song-shortcut{width:calc(100vw - 32px)}#toast{bottom:80px}}@media(prefers-reduced-motion:reduce){.spinner{animation:none}}
+
+#song-dialog[open]{position:fixed;inset:0;margin:auto}

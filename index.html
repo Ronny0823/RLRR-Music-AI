@@ -7,11 +7,11 @@
   <meta name="description" content="RLRR Music Studio: prepara tus letras, explora bocetos instrumentales y escucha tu música en un estudio independiente.">
   <title>RLRR · Music Studio</title>
   <link rel="icon" href="./icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="./style.css?v=vocals-1">
-  <script src="./timing.js?v=vocals-1" defer></script>
-  <script src="./engine.js?v=vocals-1" defer></script>
-  <script src="./ai.js?v=vocals-1" defer></script>
-  <script src="./app.js?v=vocals-1" defer></script>
+  <link rel="stylesheet" href="./style.css?v=player-result-1">
+  <script src="./timing.js?v=player-result-1" defer></script>
+  <script src="./engine.js?v=player-result-1" defer></script>
+  <script src="./ai.js?v=player-result-1" defer></script>
+  <script src="./app.js?v=player-result-1" defer></script>
 </head>
 <body>
   <aside class="sidebar">
@@ -38,7 +38,7 @@
           <button class="secondary local-sketch" id="local-generate" type="button">♫ Probar solo un boceto instrumental local</button>
           <div class="form-footer"><button type="button" id="save" class="secondary">Guardar proyecto</button><button type="button" id="export" class="secondary">Exportar letra y estilo</button></div>
         </form>
-        <div class="right-column"><section class="panel listening"><div class="panel-top"><h2>Escucha tu idea</h2><span class="live-dot"></span></div><div class="cover"><div class="cover-lines" aria-hidden="true"></div><span class="cover-badge">RLRR ORIGINALS</span><div class="cover-title">Historias que<br>se vuelven <i>música.</i></div><span class="cover-bottom">TU PRÓXIMA CREACIÓN</span></div><div id="player-empty"><h3>Todo empieza con una idea</h3><p>Pega tu letra y crea una canción con voz, o abre un audio de tu dispositivo.</p></div><div id="player-ready" hidden><h3 id="track-title"></h3><p id="track-info"></p><audio id="audio" controls preload="metadata"></audio><a id="download" class="secondary download" download>↓ Descargar audio</a></div><label class="upload" for="audio-file">↑ Abrir mi audio<input id="audio-file" type="file" accept="audio/*,.mp3,.wav,.m4a,.ogg,.flac"></label><p class="small-muted">El audio que abras permanece en tu dispositivo.</p></section>
+        <div class="right-column"><section class="panel listening"><div class="panel-top"><h2>Escucha tu idea</h2><span class="live-dot"></span></div><div class="cover"><div class="cover-lines" aria-hidden="true"></div><span class="cover-badge">RLRR ORIGINALS</span><div class="cover-title">Historias que<br>se vuelven <i>música.</i></div><span class="cover-bottom">TU PRÓXIMA CREACIÓN</span></div><div id="player-empty"><h3>Todo empieza con una idea</h3><p>Pega tu letra y crea una canción con voz, o abre un audio de tu dispositivo.</p></div><div id="result-summary" hidden><h3 id="result-title"></h3><p>Tu canción está lista para escuchar y descargar.</p><button id="reopen-song" type="button" class="primary">▶ Escuchar mi canción</button></div><label class="upload" for="audio-file">↑ Abrir mi audio<input id="audio-file" type="file" accept="audio/*,.mp3,.wav,.m4a,.ogg,.flac"></label><p class="small-muted">El audio que abras permanece en tu dispositivo.</p></section>
         <section class="panel ai-state"><div class="ai-symbol">✦</div><div><h3>Voz y música con ACE-Step</h3><span class="pending">DEMO PÚBLICA · EXPERIMENTAL</span><p>Generación externa desde tu letra y estilo. Sin contratar servicios ni introducir claves. Su disponibilidad y cuotas dependen de Hugging Face; no tiene calidad garantizada de Suno. <a href="https://huggingface.co/spaces/ACE-Step/ACE-Step" target="_blank" rel="noopener">Abrir demo ↗</a></p></div></section>
         <div class="creative-note"><span>“</span>Una guitarra puede decir<br>lo que la voz no se atreve.</div></div>
       </div>
@@ -46,6 +46,12 @@
     <section id="library-view" hidden><div class="library-heading"><div><p class="eyebrow">CADA HISTORIA TIENE SU LUGAR</p><h1>Mis proyectos<span>.</span></h1><p class="intro">Tus letras, estilos y próximos comienzos.</p></div><div class="library-actions"><button class="secondary" id="backup">↓ Exportar copia</button><label class="secondary" for="import-file">↑ Importar copia<input id="import-file" type="file" accept="application/json,.json" hidden></label></div></div><p class="library-help">Guardados en este navegador. Exporta una copia para conservarlos o pasarlos a otro dispositivo. Los archivos de audio se descargan por separado.</p><div id="projects"></div></section>
     <footer>RLRR MUSIC STUDIO <span>Tu música. Tu historia. Tu espacio.</span></footer>
   </main>
+  <div id="job-indicator" class="job-indicator" role="status" hidden><span class="spinner" aria-hidden="true"></span><span id="job-message">Creando tu canción…</span></div>
+  <button id="show-song" type="button" class="song-shortcut" hidden>♫ Tu canción está lista · Escuchar</button>
+  <dialog id="song-dialog" aria-labelledby="song-dialog-title">
+    <div class="dialog-heading"><div><p class="eyebrow">TU CREACIÓN</p><h2 id="song-dialog-title" tabindex="-1">Tu canción está lista</h2></div><button type="button" id="close-song" class="secondary" aria-label="Cerrar reproductor">✕</button></div>
+    <div id="player-ready" hidden><h3 id="track-title"></h3><p id="track-info"></p><audio id="audio" controls preload="metadata"></audio><button id="play-song" class="primary" type="button">▶ Reproducir canción</button><a id="download" class="secondary download" download>↓ Descargar audio</a><p id="playback-status" role="status" class="small-muted">Pulsa reproducir para escucharla. Descarga el audio para conservarlo.</p></div>
+  </dialog>
   <div id="toast" role="status" aria-live="polite" hidden></div>
 </body>
 </html>
